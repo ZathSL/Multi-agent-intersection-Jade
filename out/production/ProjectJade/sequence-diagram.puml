@@ -1,0 +1,28 @@
+@startuml
+participant "VehicleAgent 1" as vehicle1
+participant "VehicleAgent 2" as vehicle2
+participant "Directory Facilitator" as facilitator
+
+vehicle1 -> facilitator: Register(Presence & Termination)
+facilitator -> vehicle1: Acknowledge()
+vehicle2 -> facilitator: Register(Presence & Termination)
+facilitator -> vehicle2: Acknowledge()
+facilitator -> vehicle1: Inform_about(vehicle2)
+facilitator -> vehicle2: Inform_about(vehicle1)
+vehicle1 -> vehicle2: Send_pos(my_pos)
+vehicle2 -> vehicle1: Send_pos(my_pos)
+vehicle1 -> vehicle1: Plan_nextStep()
+vehicle2 -> vehicle2: Plan_nextStep()
+vehicle1 -> vehicle1: Do_nextStep()
+vehicle1 -> vehicle2: Send_pos(my_pos)
+vehicle2 -> vehicle2: Do_nextStep()
+vehicle2 -> vehicle1: Send_pos(my_pos)
+vehicle1 -> vehicle1: Arrived()
+vehicle1 -> facilitator: Subscribe_service(Termination)
+facilitator -> vehicle2: Inform_abotTerm(vehicle1)
+vehicle2 -> vehicle2: Do_nextStep()
+vehicle2 -> vehicle2 : Arrived()
+vehicle2 -> facilitator: Subscribe_service(Termination)
+
+
+@enduml
