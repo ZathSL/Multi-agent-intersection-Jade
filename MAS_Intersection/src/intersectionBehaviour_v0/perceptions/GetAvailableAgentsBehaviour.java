@@ -14,6 +14,9 @@ public class GetAvailableAgentsBehaviour extends CyclicBehaviour{
     private List<AID> external_agents;
     private final Object lock_agentState;
     private final Object lock_extAgents;
+    private final long pauseTime = 100; // Tempo di pausa tra un controllo e l'altro (in millisecondi)
+
+
     public GetAvailableAgentsBehaviour(List<AID> external, Object lock_agentState, Object lock_extAgents){
         this.lock_agentState = lock_agentState;
         this.lock_extAgents = lock_extAgents;
@@ -40,8 +43,14 @@ public class GetAvailableAgentsBehaviour extends CyclicBehaviour{
                     }
                 }
             }
+            //Pausa tra una ricerca e l'altra
+            // Metti in pausa l'agente per un certo periodo di tempo
+            Thread.sleep(pauseTime);
+
         }catch (FIPAException fe){
             fe.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
 

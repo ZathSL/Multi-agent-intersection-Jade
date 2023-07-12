@@ -17,6 +17,8 @@ public class MonitoringTerminationBehaviour extends CyclicBehaviour {
     private VehicleAgent agent_state;
     private final Object lock_agentState;
     private final Object lock_extAgents;
+    private final long pauseTime = 100; // Tempo di pausa tra un controllo e l'altro (in millisecondi)
+
 
     public MonitoringTerminationBehaviour(List<AID> external_agents, VehicleAgent agent_state, Object lock_agentState, Object lock_extAgents){
         this.lock_agentState = lock_agentState;
@@ -50,11 +52,15 @@ public class MonitoringTerminationBehaviour extends CyclicBehaviour {
                         //System.out.println("Agente " + myAgent.getName() + " ha rimosso correttamente dalla mappa l'agente " + agentAID.getName());
                     }
                 }
+                //Pausa tra una ricerca e l'altra
+                // Metti in pausa l'agente per un certo periodo di tempo
+                Thread.sleep(pauseTime);
             } catch (FIPAException fe) {
                 fe.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-            //Pausa tra una ricerca e l'altra
-            block();
+
         }
     }
 }
