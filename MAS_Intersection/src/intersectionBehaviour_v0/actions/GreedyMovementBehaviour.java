@@ -1,13 +1,18 @@
 package intersectionBehaviour_v0.actions;
 
+import agent.MovementIntention;
 import agent.Position;
 import agent.VehicleAgent;
 import concept.Coordinate;
 import intersectionBehaviour_v0.perceptions.MonitoringTerminationBehaviour;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /*
     Eseguo i passi verso la meta con un algoritmo A*
@@ -43,23 +48,75 @@ public class GreedyMovementBehaviour extends CyclicBehaviour {
                 Coordinate nextStep = path.get(1);
                 //System.out.println(stateAgent.getName()+ " vuole compiere il passo verso "+nextStep+ " il problema è che c'è "+this.stateAgent.getMap().getInfoCoordinate(nextStep));
 
-                //Creazione delle nuove informazioni da mandare come mio stato interno agli altri agenti
-                Position positionAgent = new Position(stateAgent.getInitPosition().getX(), stateAgent.getInitPosition().getY(),
-                        stateAgent.getFinalPosition().getX(), stateAgent.getFinalPosition().getY(), stateAgent.getCurrentlyPosition().getX(),
-                        stateAgent.getCurrentlyPosition().getY(), stateAgent.getAID());
-                if (stateAgent.getMap().modifyPosition(positionAgent, nextStep)) {
-                    if(myAgent.getName().contains("Agent-0"))System.out.println("L'agente "+myAgent.getName()+" continua ad avanzare, da "+stateAgent.getCurrentlyPosition()+ " a "+nextStep);
-                    stateAgent.setCurrentlyPosition(nextStep);
-                    synchronized (lock_extAgents) {
-                        myAgent.addBehaviour(new StateSendingBehaviour(stateAgent, externalAgent, lock_agentState, lock_agentState));
-                    }
+                // il movimento è permesso in quanto in quella posizione non vi è alcun agente
+                if (stateAgent.getMap().EnableMovement(nextStep)) {
+                    stateAgent.setIntention(nextStep);
+                    //Invio l'intenzione di movimento a tutti gli altri agenti
+                    ACLMessage messageRequest = new ACLMessage(ACLMessage.REQUEST);
+
+                    MovementIntention movementIntention = new MovementIntention(nextStep.getX(), nextStep.getY(), stateAgent.getAID(), stateAgent.getPriority());
+
                     try {
-                        Thread.sleep(1000);
+                        messageRequest.setContentObject(movementIntention);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    for (AID aid_agent : externalAgent) {
+                        messageRequest.addReceiver(aid_agent);
+                    }
+
+                    myAgent.send(messageRequest);
+                    //Attendo due secondi per dare il tempo agli altri agenti di inviarmi le risposte
+                    try {
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                }else{
-                    if(myAgent.getName().contains("Agent-0"))System.out.println("L'agente "+myAgent.getName()+" non può compiere il passo da "+stateAgent.getCurrentlyPosition()+ " a "+nextStep+ " per la presenza dell'agente "+ stateAgent.getMap().getInfoCoordinate(nextStep).getAid().getName());
+                    synchronized (lock_extAgents) {
+                        boolean flag = true;
+                        MessageTemplate template = MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), MessageTemplate.MatchPerformative(ACLMessage.REFUSE));
+                        List<ACLMessage> msg_list = stateAgent.receive(template, externalAgent.size());
+                        if (msg_list != null) {
+                            if (msg_list.size() < externalAgent.size()) {
+                                System.out.println(msg_list.size() + " Non ho ricevuto qualche conferma");
+                                flag = false;
+                            } else {
+                                for (ACLMessage msg : msg_list) {
+                                    if (msg != null && msg.getPerformative() == ACLMessage.REFUSE) {
+                                        flag = false;
+                                        System.out.println("L'agente "+msg.getSender().getName()+" ha mandato una refuse a "+ stateAgent.getName());
+                                    }
+                                }
+                            }
+                            //Nessun agente ha le mie stesse intenzioni oppure ho maggiore priorità
+                            if (flag) {
+                                //Creazione delle nuove informazioni da mandare come mio stato interno agli altri agenti
+                                Position positionAgent = new Position(stateAgent.getInitPosition().getX(), stateAgent.getInitPosition().getY(),
+                                        stateAgent.getFinalPosition().getX(), stateAgent.getFinalPosition().getY(), stateAgent.getCurrentlyPosition().getX(),
+                                        stateAgent.getCurrentlyPosition().getY(), stateAgent.getAID());
+
+                                stateAgent.getMap().modifyPosition(positionAgent, nextStep);
+                                stateAgent.setCurrentlyPosition(nextStep);
+
+                                synchronized (lock_extAgents) {
+                                    myAgent.addBehaviour(new StateSendingBehaviour(stateAgent, externalAgent, lock_agentState, lock_extAgents));
+                                }
+
+                            }
+                        } else if(externalAgent.size() == 0){
+                            //Creazione delle nuove informazioni da mandare come mio stato interno agli altri agenti
+                            Position positionAgent = new Position(stateAgent.getInitPosition().getX(), stateAgent.getInitPosition().getY(),
+                                    stateAgent.getFinalPosition().getX(), stateAgent.getFinalPosition().getY(), stateAgent.getCurrentlyPosition().getX(),
+                                    stateAgent.getCurrentlyPosition().getY(), stateAgent.getAID());
+                            stateAgent.getMap().modifyPosition(positionAgent, nextStep);
+                            //if (myAgent.getName().contains("Agent-0"))
+                            stateAgent.setCurrentlyPosition(nextStep);
+
+                        }
+                    }
+                } else {
+                    System.out.println("L'agente " + myAgent.getName() + " non può compiere il passo da " + stateAgent.getCurrentlyPosition() + " a " + nextStep + " per la presenza dell'agente " + stateAgent.getMap().getInfoCoordinate(nextStep).getAid().getName());
 
                 }
 
@@ -99,7 +156,8 @@ public class GreedyMovementBehaviour extends CyclicBehaviour {
 
             if (current.equals(destination)) {
                 if (stateAgent.getFinalPosition().equals(stateAgent.getCurrentlyPosition())) {
-                    if(myAgent.getName().contains("Agent-0"))System.out.println("L'agente "+myAgent.getName()+" è arrivato a destinazione "+stateAgent.getFinalPosition());
+                    if (myAgent.getName().contains("Agent-0"))
+                        System.out.println("L'agente " + myAgent.getName() + " è arrivato a destinazione " + stateAgent.getFinalPosition());
                     myAgent.addBehaviour(new TerminationAgentBehaviour(lock_agentState, stateAgent));
 
                 }
