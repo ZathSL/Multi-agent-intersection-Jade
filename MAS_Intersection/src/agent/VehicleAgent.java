@@ -19,6 +19,8 @@ public class VehicleAgent extends Agent implements Serializable{
     private Coordinate initPosition;
     private Coordinate finalPosition;
     private Intersection map;
+    private Integer priority;
+    private Coordinate intention;
 
 
     protected void setup(){
@@ -31,7 +33,10 @@ public class VehicleAgent extends Agent implements Serializable{
             this.initPosition = (Coordinate) args[1];
             this.currentlyPosition = (Coordinate) args[1];
             this.finalPosition = (Coordinate) args[2];
+            this.priority = (Integer) args[3];
         }
+        this.intention = new Coordinate(-1,-1);
+
         System.out.println("L'agente "+getName()+" è inizializzato, partendo da:"+this.initPosition+" e deve arrivare a "+finalPosition);
 
         /*
@@ -90,9 +95,17 @@ public class VehicleAgent extends Agent implements Serializable{
         return finalPosition;
     }
 
+    public Integer getPriority(){ return priority; }
+
+    public Coordinate getIntention(){ return intention; }
+
+    public void setIntention(Coordinate nextStep) { intention = nextStep;}
+
     public void setInitPosition(Coordinate initPosition){ this.initPosition = initPosition;}
 
     public void setFinalPosition(Coordinate finalPosition){this.finalPosition = finalPosition;}
+
+    public void setPriority(Integer priority) { this.priority = priority; }
 
     @Override
     public int hashCode() {

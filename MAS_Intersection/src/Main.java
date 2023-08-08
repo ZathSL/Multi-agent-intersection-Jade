@@ -119,7 +119,7 @@ public class Main extends JPanel {
                 Coordinate cd_start = new Coordinate(random.nextInt(dimension_height), random.nextInt(dimension_width));
                 Coordinate cd_end = new Coordinate(random.nextInt(dimension_height), random.nextInt(dimension_width));
 
-                Object[] agentArgs = new Object[]{environment, cd_start, cd_end};
+                Object[] agentArgs = new Object[]{environment, cd_start, cd_end, i};
                 AgentController agentController = container.createNewAgent(agentName, agentClassName, agentArgs);
 
                 agentController.start();
