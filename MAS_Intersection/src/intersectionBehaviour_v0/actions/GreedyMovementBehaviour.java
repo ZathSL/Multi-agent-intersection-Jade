@@ -4,15 +4,13 @@ import agent.MovementIntention;
 import agent.Position;
 import agent.VehicleAgent;
 import concept.Coordinate;
-import intersectionBehaviour_v0.perceptions.MonitoringTerminationBehaviour;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
+
 
 /*
     Eseguo i passi verso la meta con un algoritmo A*
@@ -69,7 +67,7 @@ public class GreedyMovementBehaviour extends CyclicBehaviour {
                     myAgent.send(messageRequest);
                     //Attendo due secondi per dare il tempo agli altri agenti di inviarmi le risposte
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -116,7 +114,7 @@ public class GreedyMovementBehaviour extends CyclicBehaviour {
                         }
                     }
                 } else {
-                    System.out.println("L'agente " + myAgent.getName() + " non può compiere il passo da " + stateAgent.getCurrentlyPosition() + " a " + nextStep + " per la presenza dell'agente " + stateAgent.getMap().getInfoCoordinate(nextStep).getAid().getName());
+                    if(stateAgent.getMap().getInfoCoordinate(nextStep).getAid().getName()!=null)System.out.println("L'agente " + myAgent.getName() + " non può compiere il passo da " + stateAgent.getCurrentlyPosition() + " a " + nextStep + " per la presenza dell'agente " + stateAgent.getMap().getInfoCoordinate(nextStep).getAid().getName());
 
                 }
 

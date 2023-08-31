@@ -1,21 +1,14 @@
 package intersectionBehaviour_v0.actions;
 
 import agent.VehicleAgent;
-import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
-import jade.domain.FIPAAgentManagement.AlreadyRegistered;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
-import java.util.List;
-import java.util.UUID;
 
-
-public class TerminationAgentBehaviour extends OneShotBehaviour {
+public class TerminationAgentBehaviour extends Behaviour {
 
     private final Object lock_agentState;
     private VehicleAgent agentState;
@@ -62,5 +55,11 @@ public class TerminationAgentBehaviour extends OneShotBehaviour {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public boolean done() {
+        myAgent.doDelete();
+        return true;
     }
 }
