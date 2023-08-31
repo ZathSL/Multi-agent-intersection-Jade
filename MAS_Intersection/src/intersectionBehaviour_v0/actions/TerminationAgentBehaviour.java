@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class TerminationAgentBehaviour extends OneShotBehaviour {
+public class TerminationAgentBehaviour extends Behaviour {
 
     private final Object lock_agentState;
     private VehicleAgent agentState;
@@ -62,5 +62,11 @@ public class TerminationAgentBehaviour extends OneShotBehaviour {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public boolean done() {
+        myAgent.doDelete();
+        return true;
     }
 }
