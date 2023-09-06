@@ -1,1 +1,1 @@
-http://Mone-PC.station:7778/acc
+http://Mone-PC.wind3.hub:7778/acc

@@ -9,7 +9,6 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
 import java.util.List;
-import java.util.UUID;
 
 public class MonitoringTerminationBehaviour extends CyclicBehaviour {
 

@@ -1,6 +1,5 @@
 package agent;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import intersectionBehaviour_v0.IntersectionBehaviour;
 import concept.Coordinate;
 import concept.Intersection;
@@ -77,10 +76,10 @@ public class VehicleAgent extends Agent implements Serializable{
     }
 
     public void setMap(Intersection map){ this.map = map;}
-    public boolean setCurrentlyPosition(Coordinate currentlyPosition) {
-        if(currentlyPosition==null)return false;
+    public void setCurrentlyPosition(Coordinate currentlyPosition) {
+        if(currentlyPosition==null)return;
         this.currentlyPosition = currentlyPosition;
-        return true;
+
     }
 
     public Coordinate getCurrentlyPosition() {
