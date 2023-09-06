@@ -51,6 +51,7 @@ public class TerminationAgentBehaviour extends Behaviour {
                 myAgent.doDelete();
                 agentState.getMap().deleteAgentByAID(myAgent.getAID());
                 System.out.println("Ho terminato correttamente "+myAgent.getName());
+
             } catch (FIPAException e) {
                 e.printStackTrace();
             }

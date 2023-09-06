@@ -108,7 +108,6 @@ public class GreedyMovementBehaviour extends CyclicBehaviour {
                                     stateAgent.getFinalPosition().getX(), stateAgent.getFinalPosition().getY(), stateAgent.getCurrentlyPosition().getX(),
                                     stateAgent.getCurrentlyPosition().getY(), stateAgent.getAID());
                             stateAgent.getMap().modifyPosition(positionAgent, nextStep);
-                            //if (myAgent.getName().contains("Agent-0"))
                             stateAgent.setCurrentlyPosition(nextStep);
 
                         }

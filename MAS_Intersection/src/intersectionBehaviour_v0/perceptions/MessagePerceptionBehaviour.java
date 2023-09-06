@@ -3,9 +3,6 @@ package intersectionBehaviour_v0.perceptions;
 import agent.MovementIntention;
 import agent.Position;
 import agent.VehicleAgent;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import concept.Coordinate;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -79,10 +76,12 @@ public class MessagePerceptionBehaviour extends CyclicBehaviour {
                                         movementIntention.getNextStepY() == stateAgent.getIntention().getY() &&
                                         movementIntention.getPriority() > stateAgent.getPriority()) {
                                     //In questo caso mando una refuse perché ho più priorità
+                                    //Il mio valore di priorità è minore (valori più piccoli corrispondono a priorità maggiore)
                                     message = new ACLMessage(ACLMessage.REFUSE);
 
                                 } else {
                                     //In questo caso mando una confirm
+                                    //Il mio valore di priorità è maggiore
                                     message = new ACLMessage(ACLMessage.CONFIRM);
                                 }
                                 message.addReceiver(movementIntention.getAid());

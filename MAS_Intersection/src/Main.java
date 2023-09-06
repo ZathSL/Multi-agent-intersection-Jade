@@ -28,12 +28,12 @@ public class Main extends JPanel {
     private static final int UPDATE_INTERVAL = 100; // Intervallo di aggiornamento (in millisecondi)
 
     private List<Position> agentPositions; // Posizioni degli agenti sulla mappa
-    private Intersection environment; // Riferimento all'oggetto Intersection
+    private static Intersection environment; // Riferimento all'oggetto Intersection
 
     public Main(Intersection environment) {
         agentPositions = new ArrayList<>();
         synchronized (environment) {
-            this.environment = environment;
+            Main.environment = environment;
         }
 
         setPreferredSize(new java.awt.Dimension(MAP_SIZE * AGENT_SIZE, MAP_SIZE * AGENT_SIZE));
@@ -52,10 +52,9 @@ public class Main extends JPanel {
 
     // Aggiorna le posizioni degli agenti
     private void updateAgentPositions() {
-        synchronized (environment) {
-            agentPositions.clear();
-            agentPositions.addAll(environment.getAllAgents());// Aggiorna la lista delle posizioni degli agenti
-        }
+        agentPositions.clear();
+        agentPositions.addAll(environment.getAllAgents());// Aggiorna la lista delle posizioni degli agenti
+
     }
 
     // Disegna l'interfaccia grafica
@@ -104,10 +103,10 @@ public class Main extends JPanel {
         // Creazione dell'ambiente
         int dimension_height = MAP_SIZE;
         int dimension_width = MAP_SIZE;
-        Intersection environment = new Intersection(dimension_height, dimension_width);
+        environment = new Intersection(dimension_height, dimension_width);
 
         // Avvio periodico degli agenti
-        int numAgents = 10;
+        int numAgents = 4;
         long delay = 0;
         for (int i = 0; i < numAgents; i++) {
             // Crea un agente e specifica la classe dell'agente
@@ -118,6 +117,15 @@ public class Main extends JPanel {
                 Random random = new Random();
                 Coordinate cd_start = new Coordinate(random.nextInt(dimension_height), random.nextInt(dimension_width));
                 Coordinate cd_end = new Coordinate(random.nextInt(dimension_height), random.nextInt(dimension_width));
+
+                if(i == 0){
+                    cd_start = new Coordinate(1,1);
+                    cd_end = new Coordinate(1,2);
+                }
+                if(i == 1){
+                    cd_start = new Coordinate(1,3);
+                    cd_end = new Coordinate(1,2);
+                }
 
                 Object[] agentArgs = new Object[]{environment, cd_start, cd_end, i};
                 AgentController agentController = container.createNewAgent(agentName, agentClassName, agentArgs);
