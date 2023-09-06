@@ -65,9 +65,9 @@ public class GreedyMovementBehaviour extends CyclicBehaviour {
                     }
 
                     myAgent.send(messageRequest);
-                    //Attendo due secondi per dare il tempo agli altri agenti di inviarmi le risposte
+                    //Attendo tre secondi per dare il tempo agli altri agenti di inviarmi le risposte
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(3000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }

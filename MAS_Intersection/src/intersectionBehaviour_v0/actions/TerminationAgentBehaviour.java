@@ -48,9 +48,7 @@ public class TerminationAgentBehaviour extends Behaviour {
             //Registrazione del servizio presso il Directory Facilitator (DF)
             try {
                 DFService.register(myAgent, agentDescription);
-                myAgent.doDelete();
-                agentState.getMap().deleteAgentByAID(myAgent.getAID());
-                System.out.println("Ho terminato correttamente "+myAgent.getName());
+                System.out.println(myAgent.getName() + " dice: Ho terminato correttamente, sono arrivato alle coordinate: " + agentState.getCurrentlyPosition());
 
             } catch (FIPAException e) {
                 e.printStackTrace();
@@ -60,6 +58,7 @@ public class TerminationAgentBehaviour extends Behaviour {
 
     @Override
     public boolean done() {
+        agentState.getMap().deleteAgentByAID(myAgent.getAID());
         myAgent.doDelete();
         return true;
     }
