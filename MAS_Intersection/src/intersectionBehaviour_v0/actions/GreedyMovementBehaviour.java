@@ -77,7 +77,7 @@ public class GreedyMovementBehaviour extends CyclicBehaviour {
                         List<ACLMessage> msg_list = stateAgent.receive(template, externalAgent.size());
                         if (msg_list != null) {
                             if (msg_list.size() < externalAgent.size()) {
-                                System.out.println(msg_list.size() + " Non ho ricevuto qualche conferma");
+                                System.out.println(stateAgent.getName() + "dice: Non ho ricevuto qualche conferma");
                                 flag = false;
                             } else {
                                 for (ACLMessage msg : msg_list) {
@@ -100,24 +100,27 @@ public class GreedyMovementBehaviour extends CyclicBehaviour {
                                 synchronized (lock_extAgents) {
                                     myAgent.addBehaviour(new StateSendingBehaviour(stateAgent, externalAgent, lock_agentState, lock_extAgents));
                                 }
-
+                                path.remove(0);
+                            }else{
+                                path = dijkstra(stateAgent.getCurrentlyPosition(), stateAgent.getFinalPosition());
                             }
                         } else if(externalAgent.size() == 0){
-                            //Creazione delle nuove informazioni da mandare come mio stato interno agli altri agenti
                             Position positionAgent = new Position(stateAgent.getInitPosition().getX(), stateAgent.getInitPosition().getY(),
                                     stateAgent.getFinalPosition().getX(), stateAgent.getFinalPosition().getY(), stateAgent.getCurrentlyPosition().getX(),
                                     stateAgent.getCurrentlyPosition().getY(), stateAgent.getAID());
                             stateAgent.getMap().modifyPosition(positionAgent, nextStep);
                             stateAgent.setCurrentlyPosition(nextStep);
-
+                            path.remove(0);
                         }
                     }
                 } else {
+                    path = dijkstra(stateAgent.getCurrentlyPosition(), stateAgent.getFinalPosition());
                     if(stateAgent.getMap().getInfoCoordinate(nextStep).getAid().getName()!=null)System.out.println("L'agente " + myAgent.getName() + " non può compiere il passo da " + stateAgent.getCurrentlyPosition() + " a " + nextStep + " per la presenza dell'agente " + stateAgent.getMap().getInfoCoordinate(nextStep).getAid().getName());
 
                 }
 
-                path.remove(0);
+                //path.remove(0);
+
             } else {
                 if (this.stateAgent.getMap().getInfoCoordinate(stateAgent.getFinalPosition()) != null && stateAgent.getCurrentlyPosition().equals(stateAgent.getFinalPosition())) {
                     myAgent.addBehaviour(new TerminationAgentBehaviour(lock_agentState, stateAgent));

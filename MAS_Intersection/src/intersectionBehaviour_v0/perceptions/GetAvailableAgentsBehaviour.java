@@ -44,7 +44,7 @@ public class GetAvailableAgentsBehaviour extends CyclicBehaviour{
                 }
             }
             //Pausa tra una ricerca e l'altra
-            // Metti in pausa l'agente per un certo periodo di tempo
+            // Metti in pausa il comportamento per un certo periodo di tempo
             Thread.sleep(pauseTime);
 
         }catch (FIPAException fe){
