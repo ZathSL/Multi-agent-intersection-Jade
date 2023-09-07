@@ -62,6 +62,15 @@ public class Simulation {
                     cd_end = new Coordinate(random.nextInt(dimension_height), random.nextInt(dimension_width));
                 }
 
+                /* if (i == 2){
+                    cd_start = new Coordinate(0,2);
+                    cd_end = new Coordinate(1,2);
+                }
+                if( i == 3){
+                    cd_start = new Coordinate(0,3);
+                    cd_end = new Coordinate(1,2);
+                }*/
+
                 Object[] agentArgs = new Object[]{environment, cd_start, cd_end, i};
                 AgentController agentController = container.createNewAgent(agentName, agentClassName, agentArgs);
 
